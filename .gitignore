@@ -1,0 +1,7 @@
+apex_scripts/
+resources/
+testdata/
+**/.settings
+target
+*.classpath
+*.project

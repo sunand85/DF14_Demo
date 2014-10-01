@@ -46,7 +46,7 @@ public class ETLJobProcessor implements IJobProcessor {
 	static Map<String, String> pMap;
 	
 	private String dropTableQuery = "DROP TABLE IF EXISTS ";
-	private static String resDir = "./resources/datagen/";
+	private static String resDir = "./resources";
 	private SfdcBulkOperationImpl op;
 	private H2Db db;
 	private SfdcBulkApi bulkApi;

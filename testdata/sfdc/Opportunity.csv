@@ -1,0 +1,2 @@
+AccountName,IsPrivate,Name,StageName,Amount,CloseDate,Type,Subscription_Start_Date__c,Subscription_End_Date__c,OTR__c,ASV__c,Users__c
+East Bay Brass Foundry,0,Opp1,Closed Won,220000,2011-06-26,New Customer,2013-09-01,2013-09-30,10,20,30

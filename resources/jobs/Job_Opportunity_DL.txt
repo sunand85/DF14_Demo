@@ -9,7 +9,7 @@
             "Id",
             "Name"
         ],
-        "output": "./resources/datagen/process/account.csv"
+        "output": "./resources/process/account.csv"
     },
     "transform": {
     	"query" : "",
@@ -17,7 +17,7 @@
     	"limit" : 100,
         "tableInfo": [
             {
-                "file": "./resources/datagen/process/account.csv",
+                "file": "./resources/process/account.csv",
                 "table": "account",
                 "joinColumnName": "name",
                 "columns": [
@@ -80,7 +80,7 @@
             }
         ],
         "join": true,
-        "output": "./resources/datagen/process/Job_Opportunity_DL.csv"
+        "output": "./resources/process/Job_Opportunity_DL.csv"
     },
     "load": {
         "target": "sfdc",
@@ -88,6 +88,6 @@
         "operation": "insert",
         "contentType": "CSV",
         "cleanUp" : true,
-        "file": "./resources/datagen/process/Job_Opportunity_DL.csv"
+        "file": "./resources/process/Job_Opportunity_DL.csv"
     }
 }

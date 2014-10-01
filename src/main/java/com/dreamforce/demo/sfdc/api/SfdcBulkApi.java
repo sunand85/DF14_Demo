@@ -246,7 +246,7 @@ public class SfdcBulkApi {
 		App.logInfo("Pulling all Records of " + sObject);
 		String query = QueryBuilder.buildSOQLQuery(sObject, "Id");
 		App.logInfo("Pull Query : " + query);
-		String path = "./resources/datagen/process/" + sObject + "_cleanup.csv";
+		String path = "./resources/process/" + sObject + "_cleanup.csv";
 		App.logInfo("Output File Loc : " + path);
 		synchronized (this) {
 			pullDataFromSfdc(sObject, query, path);
@@ -287,7 +287,7 @@ public class SfdcBulkApi {
 			throws UnsupportedEncodingException, IOException {
 		List<String> batchUrls = new ArrayList<String>();
 		BufferedReader rdr = new BufferedReader(new FileReader(csvFile));
-		File tmpFile = new File(basedir + "/resources/datagen/process/"
+		File tmpFile = new File(basedir + "/resources/process/"
 				+ job_id + "_tempFile.csv");
 		// read the CSV header row
 		byte[] headerBytes = (rdr.readLine() + "\n").getBytes("UTF-8");

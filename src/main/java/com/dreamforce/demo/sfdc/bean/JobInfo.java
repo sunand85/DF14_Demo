@@ -1,228 +1,468 @@
 package com.dreamforce.demo.sfdc.bean;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
-@SuppressWarnings("restriction")
-@XmlRootElement
+import org.codehaus.jackson.annotate.JsonProperty;
+
+/**
+ * Job Definition Pojo Template
+ * @author Sunand
+ *
+ */
 public class JobInfo {
-	private String id;
-	private String operation;
-	private String createdById;
-	private String object;
-	private String createdDate;
-	private String systemModstamp;
-	private String state;
-	private String concurrencyMode;
-	private String contentType;
-	private String numberBatchesQueued;
-	private String numberBatchesInProgress;
-	private String numberBatchesCompleted;
-	private String numberBatchesFailed;
-	private String numberBatchesTotal;
-	private String numberRecordsProcessed;
-	private String numberRetries;
-	private String apiVersion;
-	private String numberRecordsFailed;
-	private String totalProcessingTime;
-	private String apiActiveProcessingTime;
-	private String apexProcessingTime;
-	private String jobAttr;
 
-	public String getJobAttr() {
-		return jobAttr;
+	String jobName;
+	String jobType;
+	String namespacePrefix;
+	boolean useNameSpace;
+	@JsonProperty("entityFunction")
+	String metaDataFunction;
+	boolean runAggregation;
+	
+	@JsonProperty("preprocess")
+	PreProcess preProcess;
+	@JsonProperty("extract")
+	SfdcExtract extract;
+	@JsonProperty("transform")
+	Transform transform;
+	@JsonProperty("load")
+	SfdcLoad load;
+	
+	public boolean isRunAggregation() {
+		return runAggregation;
 	}
 
-	public void setJobAttr(String jobAttr) {
-		this.jobAttr = jobAttr;
+	public void setRunAggregation(boolean runAggregation) {
+		this.runAggregation = runAggregation;
 	}
 
-	public String getId() {
-		return id;
+	public String getJobName() {
+		return jobName;
 	}
 
-	@XmlElement
-	public void setId(String id) {
-		this.id = id;
+	public void setJobName(String jobName) {
+		this.jobName = jobName;
+	}
+	
+	public String getJobType() {
+		return jobType;
+	}
+	
+	public void setJobType(String jobType) {
+		this.jobType = jobType;
 	}
 
-	public String getOperation() {
-		return operation;
+	public String getNamespacePrefix() {
+		return namespacePrefix;
 	}
 
-	@XmlElement
-	public void setOperation(String operation) {
-		this.operation = operation;
+	public void setNamespacePrefix(String namespacePrefix) {
+		this.namespacePrefix = namespacePrefix;
 	}
 
-	public String getCreatedById() {
-		return createdById;
+	public boolean isUseNameSpace() {
+		return useNameSpace;
 	}
 
-	@XmlElement
-	public void setCreatedById(String createdById) {
-		this.createdById = createdById;
+	public void setUseNameSpace(boolean useNameSpace) {
+		this.useNameSpace = useNameSpace;
+	}
+	
+	public String getMetaDataFunction() {
+		return metaDataFunction;
 	}
 
-	public String getObject() {
-		return object;
+	public void setMetaDataFunction(String metaDataFunction) {
+		this.metaDataFunction = metaDataFunction;
 	}
 
-	@XmlElement
-	public void setObject(String object) {
-		this.object = object;
+	public PreProcess getPreProcessRule() {
+		return preProcess;
+	}
+	
+	public void setPreProcess(PreProcess preProcess) {
+		this.preProcess = preProcess;
 	}
 
-	public String getCreatedDate() {
-		return createdDate;
+	public SfdcExtract getExtractionRule() {
+		return extract;
 	}
 
-	@XmlElement
-	public void setCreatedDate(String createdDate) {
-		this.createdDate = createdDate;
+	public void setExtract(SfdcExtract extract) {
+		this.extract = extract;
 	}
 
-	public String getSystemModstamp() {
-		return systemModstamp;
+	public Transform getTransformationRule() {
+		return transform;
 	}
 
-	@XmlElement
-	public void setSystemModstamp(String systemModstamp) {
-		this.systemModstamp = systemModstamp;
+	public void setTransform(Transform transform) {
+		this.transform = transform;
 	}
 
-	public String getState() {
-		return state;
+	public SfdcLoad getLoadRule() {
+		return load;
 	}
 
-	@XmlElement
-	public void setState(String state) {
-		this.state = state;
+	public void setLoad(SfdcLoad load) {
+		this.load = load;
 	}
 
-	public String getConcurrencyMode() {
-		return concurrencyMode;
+	/**
+	 * To Store any pre processing of data required before ETL process
+	 * Currently only file operations are supported and also only for Usage Data
+	 * @author Sunand
+	 *
+	 */
+	public class PreProcess {
+		String inputFile;
+		boolean monthly;
+		boolean weekly;
+		String fieldName;
+		String outputFile;
+		boolean daysToAdd;
+		
+		public String getInputFile() {
+			return inputFile;
+		}
+		public void setInputFile(String inputFile) {
+			this.inputFile = inputFile;
+		}
+		
+		public boolean isMonthly() {
+			return monthly;
+		}
+		public void setMonthly(boolean monthly) {
+			this.monthly = monthly;
+		}
+		
+		public boolean isDaysToAdd(){
+			return daysToAdd;
+		}
+		
+		public void setDaysToAdd(boolean daysToAdd){
+			this.daysToAdd = daysToAdd;
+		}
+		
+		public boolean isWeekly() {
+			return weekly;
+		}
+		public void setWeekly(boolean weekly) {
+			this.weekly = weekly;
+		}
+		
+		public String getFieldName() {
+			return fieldName;
+		}
+		public void setFieldName(String fieldName) {
+			this.fieldName = fieldName;
+		}
+		
+		public String getOutputFile() {
+			return outputFile;
+		}
+		public void setOutputFile(String outputFile) {
+			this.outputFile = outputFile;
+		}
 	}
+	
+	/**
+	 * Storing the Extraction Rules for SFDC
+	 * @author Sunand
+	 *
+	 */
+	public class SfdcExtract {
+		String source;
+		String connection;
+		String table;
+		List<String> fields;
+		@JsonProperty("output")
+		String output;
 
-	@XmlElement
-	public void setConcurrencyMode(String concurrencyMode) {
-		this.concurrencyMode = concurrencyMode;
+		public SfdcExtract() {
+			// TODO Auto-generated constructor stub
+		}
+		
+		public String getSource() {
+			return source;
+		}
+
+		public void setSource(String source) {
+			this.source = source;
+		}
+
+		public String getConnection() {
+			return connection;
+		}
+
+		public void setConnection(String connection) {
+			this.connection = connection;
+		}
+
+		public String getTable() {
+			return table;
+		}
+
+		public void setTable(String table) {
+			this.table = table;
+		}
+
+		public List<String> getFields() {
+			return fields;
+		}
+
+		public void setFields(List<String> fields) {
+			this.fields = fields;
+		}
+
+		public String getOutputFileLoc() {
+			return output;
+		}
+
+		public void setOutputFileLoc(String output) {
+			this.output = output;
+		}
+		
+		@Override
+		public String toString() {
+			return toStringFormat(this);
+		}
 	}
+	
+	/**
+	 * Storing the Transformation (mapping, join etc)
+	 * @author Sunand
+	 *
+	 */
+	public static class Transform {
+	
+		String query;
+		@JsonProperty("useQuery")
+		boolean useQuery;
+		boolean join;
+		boolean picklist;
+		int limit;
+		@JsonProperty("output")
+		String output;
+		ArrayList<Transform.TableInfo> tableInfo;
+		
+		public Transform() {
+			// TODO Auto-generated constructor stub
+		}
+		
+		public String getQuery() {
+			return query;
+		}
+		public void setQuery(String query) {
+			this.query = query;
+		}
+		public boolean isJoinUsingQuery() {
+			return useQuery;
+		}
+		public void setJoinUsingQuery(boolean useQuery) {
+			this.useQuery = useQuery;
+		}
+		public boolean isJoin() {
+			return join;
+		}
+		public void setJoin(boolean join) {
+			this.join = join;
+		}
+		public boolean isPicklist() {
+			return picklist;
+		}
+		public void setPicklist(boolean picklist) {
+			this.picklist = picklist;
+		}
+		public int getLimit() {
+			return limit;
+		}
+		public void setLimit(int limit) {
+			this.limit = limit;
+		}
+		public String getOutputFileLoc() {
+			return output;
+		}
+		public void setOutputFileLoc(String output) {
+			this.output = output;
+		}
+		public ArrayList<TableInfo> getTableInfo() {
+			return tableInfo;
+		}
+		public void setTableInfo(ArrayList<TableInfo> tableInfo) {
+			this.tableInfo = tableInfo;
+		}
+		
+		@Override
+		public String toString() {
+			return toStringFormat(this);
+		}
+		
+		/**
+		 * Table info
+		 * @author Sunand
+		 *
+		 */
+		public static class TableInfo {
+			@JsonProperty("file")
+			String file;
+			String table;
+			String joinColumnName;
+			List<Columns> columns;
+			
+			public TableInfo() {
+				// TODO Auto-generated constructor stub
+			}
+			
+			public String getCsvFile() {
+				return file;
+			}
+			public void setCsvFile(String file) {
+				this.file = file;
+			}
+			public String getTable() {
+				return table;
+			}
+			public void setTable(String table) {
+				this.table = table;
+			}
+			public String getJoinColumnName() {
+				return joinColumnName;
+			}
+			public void setJoinColumnName(String joinColumnName) {
+				this.joinColumnName = joinColumnName;
+			}
+			public List<Columns> getColumns() {
+				return columns;
+			}
+			public void setColumns(List<Columns> columns) {
+				this.columns = columns;
+			}
 
-	public String getContentType() {
-		return contentType;
+			@Override
+			public String toString() {
+				return toStringFormat(this);
+			}
+			
+			/**
+			 * Final Columns required to be outputted by the program with proper alias names.
+			 * @author Sunand
+			 *
+			 */
+			public static class Columns {
+				String name;
+				String alias;
+				public String getName() {
+					return name;
+				}
+				public void setName(String name) {
+					this.name = name;
+				}
+				public String getAlias() {
+					return alias;
+				}
+				public void setAlias(String alias) {
+					this.alias = alias;
+				}
+				
+				@Override
+				public String toString() {
+					return toStringFormat(this);
+				}
+			}
+		}
 	}
+	
+	/**
+	 * Holding the Load rules required to push the data to SFDC
+	 * @author Sunand
+	 *
+	 */
+	public class SfdcLoad {
+		String target;
+		String sObject;
+		String operation;
+		String contentType;
+		String file;
 
-	@XmlElement
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
+        String externalIDField;
+		boolean cleanUp;
+		
+		public SfdcLoad() {
+			// TODO Auto-generated constructor stub
+		}
+		
+		public String getTarget() {
+			return target;
+		}
+		public void setTarget(String target) {
+			this.target = target;
+		}
+		public String getsObject() {
+			return sObject;
+		}
+		public void setsObject(String sObject) {
+			this.sObject = sObject;
+		}
+		public String getOperation() {
+			return operation;
+		}
+		public void setOperation(String operation) {
+			this.operation = operation;
+		}
+		public String getContentType() {
+			return contentType;
+		}
+		public void setContentType(String contentType) {
+			this.contentType = contentType;
+		}
+		public String getFile() {
+			return file;
+		}
+		public void setFile(String file) {
+			this.file = file;
+		}
+		public boolean isCleanUp() {
+			return cleanUp;
+		}
+		public void setCleanUp(boolean cleanUp) {
+			this.cleanUp = cleanUp;
+		}
+        public String getExternalIDField() {
+            return externalIDField;
+        }
+        public void setExternalIDField(String externalIDField) {
+            this.externalIDField = externalIDField;
+        }
+
+		@Override
+		public String toString() {
+			return toStringFormat(this);
+		}
 	}
-
-	public String getNumberBatchesQueued() {
-		return numberBatchesQueued;
-	}
-
-	@XmlElement
-	public void setNumberBatchesQueued(String numberBatchesQueued) {
-		this.numberBatchesQueued = numberBatchesQueued;
-	}
-
-	public String getNumberBatchesInProgress() {
-		return numberBatchesInProgress;
-	}
-
-	@XmlElement
-	public void setNumberBatchesInProgress(String numberBatchesInProgress) {
-		this.numberBatchesInProgress = numberBatchesInProgress;
-	}
-
-	public String getNumberBatchesCompleted() {
-		return numberBatchesCompleted;
-	}
-
-	@XmlElement
-	public void setNumberBatchesCompleted(String numberBatchesCompleted) {
-		this.numberBatchesCompleted = numberBatchesCompleted;
-	}
-
-	public String getNumberBatchesFailed() {
-		return numberBatchesFailed;
-	}
-
-	@XmlElement
-	public void setNumberBatchesFailed(String numberBatchesFailed) {
-		this.numberBatchesFailed = numberBatchesFailed;
-	}
-
-	public String getNumberBatchesTotal() {
-		return numberBatchesTotal;
-	}
-
-	@XmlElement
-	public void setNumberBatchesTotal(String numberBatchesTotal) {
-		this.numberBatchesTotal = numberBatchesTotal;
-	}
-
-	public String getNumberRecordsProcessed() {
-		return numberRecordsProcessed;
-	}
-
-	@XmlElement
-	public void setNumberRecordsProcessed(String numberRecordsProcessed) {
-		this.numberRecordsProcessed = numberRecordsProcessed;
-	}
-
-	public String getNumberRetries() {
-		return numberRetries;
-	}
-
-	@XmlElement
-	public void setNumberRetries(String numberRetries) {
-		this.numberRetries = numberRetries;
-	}
-
-	public String getApiVersion() {
-		return apiVersion;
-	}
-
-	@XmlElement
-	public void setApiVersion(String apiVersion) {
-		this.apiVersion = apiVersion;
-	}
-
-	public String getNumberRecordsFailed() {
-		return numberRecordsFailed;
-	}
-
-	@XmlElement
-	public void setNumberRecordsFailed(String numberRecordsFailed) {
-		this.numberRecordsFailed = numberRecordsFailed;
-	}
-
-	public String getTotalProcessingTime() {
-		return totalProcessingTime;
-	}
-
-	@XmlElement
-	public void setTotalProcessingTime(String totalProcessingTime) {
-		this.totalProcessingTime = totalProcessingTime;
-	}
-
-	public String getApiActiveProcessingTime() {
-		return apiActiveProcessingTime;
-	}
-
-	@XmlElement
-	public void setApiActiveProcessingTime(String apiActiveProcessingTime) {
-		this.apiActiveProcessingTime = apiActiveProcessingTime;
-	}
-
-	public String getApexProcessingTime() {
-		return apexProcessingTime;
-	}
-
-	@XmlElement
-	public void setApexProcessingTime(String apexProcessingTime) {
-		this.apexProcessingTime = apexProcessingTime;
+	
+	/**
+	 * Common Reflection code to generate to String format on the fly for all classes
+	 * @param obj
+	 * @return
+	 */
+	private static String toStringFormat(Object obj) {
+		StringBuffer summary = new StringBuffer();
+		Field[] fList=obj.getClass().getDeclaredFields();
+		for (Field f: fList){
+			try {
+				summary.append(f.getName()+" : "+f.get(obj)+" | ");
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		return summary.toString();
 	}
 }

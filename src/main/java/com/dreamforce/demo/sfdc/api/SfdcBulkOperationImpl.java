@@ -6,10 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
@@ -17,9 +13,11 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.core.Persister;
 
 import com.dreamforce.demo.App;
-import com.dreamforce.demo.sfdc.bean.JobInfo;
+import com.dreamforce.demo.sfdc.bean.BulkJobInfo;
 import com.dreamforce.demo.util.Template;
 import com.dreamforce.demo.webaction.Header;
 import com.dreamforce.demo.webaction.HttpResponseObj;
@@ -30,7 +28,6 @@ import com.dreamforce.demo.webaction.WebAction;
  * @author Sunand
  *
  */
-@SuppressWarnings("restriction")
 public class SfdcBulkOperationImpl implements ISfdcBulkOperation {
 
 	public static String session_id = "";
@@ -231,28 +228,14 @@ public class SfdcBulkOperationImpl implements ISfdcBulkOperation {
 	}
 	
 	public void printSFJobInformation(String jobContent) {
-		JAXBContext jaxbContext;
-		JobInfo job;
+		Serializer serializer = new Persister();
+		BulkJobInfo info = null;
 		try {
-			jaxbContext = JAXBContext.newInstance(JobInfo.class);
-			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-			job = (JobInfo) jaxbUnmarshaller.unmarshal(new ByteArrayInputStream(jobContent.replace("xmlns", "jobAttr").getBytes()));
-			App.logInfo("Job Id :::::::::::::::: " +job.getId());
-			App.logInfo("Object Name ::::::::::: " +job.getObject());
-			App.logInfo("Operation ::::::::::::: " +job.getOperation());
-			App.logInfo("Job State ::::::::::::: " +job.getState());
-			App.logInfo("# Batches Queued :::::: " +job.getNumberBatchesQueued());
-			App.logInfo("# Batches In-Progress : " +job.getNumberBatchesInProgress());
-			App.logInfo("# Batches Completed ::: " +job.getNumberBatchesCompleted() );
-			App.logInfo("# Batches Total ::::::: " +job.getNumberBatchesTotal());
-			App.logInfo("# Records Processed ::: " + job.getNumberRecordsProcessed());
-			App.logInfo("# Reocrds Failed :::::: " +job.getNumberRecordsFailed());
-			App.logInfo("# Processing Time ::::: " +Integer.parseInt(job.getTotalProcessingTime())/1000+ " Sec");
-		} catch (JAXBException e) {
-			App.logInfo("Exception While Parsing Job :" +e.getLocalizedMessage());
+			info = serializer.read(BulkJobInfo.class, jobContent);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+		App.logInfo("SF Job Information\n" + info.toString());
 	}
 
 	public String fetchResult(String uri) {

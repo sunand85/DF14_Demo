@@ -11,21 +11,25 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.dreamforce.demo.App;
 import com.dreamforce.demo.db.H2Db;
-import com.dreamforce.demo.sfdc.JobInfo.PreProcess;
-import com.dreamforce.demo.sfdc.JobInfo.SfdcExtract;
-import com.dreamforce.demo.sfdc.JobInfo.SfdcLoad;
-import com.dreamforce.demo.sfdc.JobInfo.Transform;
-import com.dreamforce.demo.sfdc.JobInfo.Transform.TableInfo;
-import com.dreamforce.demo.sfdc.JobInfo.Transform.TableInfo.Columns;
 import com.dreamforce.demo.sfdc.api.SfdcBulkApi;
 import com.dreamforce.demo.sfdc.api.SfdcBulkOperationImpl;
 import com.dreamforce.demo.sfdc.bean.BulkJobInfo;
+import com.dreamforce.demo.sfdc.bean.JobInfo;
 import com.dreamforce.demo.sfdc.bean.SFDCInfo;
+import com.dreamforce.demo.sfdc.bean.JobInfo.PreProcess;
+import com.dreamforce.demo.sfdc.bean.JobInfo.SfdcExtract;
+import com.dreamforce.demo.sfdc.bean.JobInfo.SfdcLoad;
+import com.dreamforce.demo.sfdc.bean.JobInfo.Transform;
+import com.dreamforce.demo.sfdc.bean.JobInfo.Transform.TableInfo;
+import com.dreamforce.demo.sfdc.bean.JobInfo.Transform.TableInfo.Columns;
 import com.dreamforce.demo.sfdc.metadata.Entity;
+import com.dreamforce.demo.sfdc.util.SFDCConnection;
 import com.dreamforce.demo.util.Validator;
 
 /**
@@ -42,27 +46,32 @@ public class ETLJobProcessor implements IJobProcessor {
 	static Map<String, String> pMap;
 	
 	private String dropTableQuery = "DROP TABLE IF EXISTS ";
-	private String resDir = "./resources/datagen/";
+	private static String resDir = "./resources/datagen/";
 	private SfdcBulkOperationImpl op;
-	private SFDCInfo info;
-	private JobInfo jobInfo;
-	private ObjectMapper mapper;
 	private H2Db db;
 	private SfdcBulkApi bulkApi;
 	
 	public ETLJobProcessor(SFDCInfo info) {
-		// TODO Auto-generated constructor stub
-		this.info = info;
 		op = new SfdcBulkOperationImpl(info.getSessionId());
 		async_job_url = info.getEndpoint() + async_url + api_version + "/job";
 		bulkApi = new SfdcBulkApi(info);
-		mapper = new ObjectMapper();
 	}
 
 	/**
 	 * @param args
+	 * @throws IOException 
+	 * @throws JsonMappingException 
+	 * @throws JsonParseException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
+		ETLJobProcessor processor = new ETLJobProcessor(SFDCConnection.fetchSFDCInfo());
+		ObjectMapper mapper = new ObjectMapper();
+		JobInfo jobInfo = mapper.readValue(new File(resDir + "/jobs/Job_Opportunity_DL.txt"), JobInfo.class);
+		BulkJobInfo bulkJobInfo = processor.execute(jobInfo);
+		if(bulkJobInfo.getNumberBatchesFailed() >= 1)
+			App.logError("Kidney Failure, Oh It's not that serious go check the Bulk Data Load Jobs/logs");
+		else
+			App.logInfo("Done, \\M/ \n==============THE END==============");
 	}
 
 	public void getListOfJobs() {
@@ -82,7 +91,8 @@ public class ETLJobProcessor implements IJobProcessor {
 				Method method = ent.getClass().getMethod(metaDataFunction);
 				method.invoke(ent);
 			}
-			//Pre Process Especially for Usage Data
+			
+			//Pre Process 
 			PreProcess preProcess = jobInfo.getPreProcessRule();
 			if(preProcess != null){
 				File inputFile = new File(preProcess.getInputFile());
@@ -184,6 +194,7 @@ public class ETLJobProcessor implements IJobProcessor {
 		} finally {
 			//Closing Db Connection
 			db.close();
+			//We need to delete the temp files.
 		}
 		
 		return null;

@@ -335,7 +335,7 @@ public class SfdcBulkApi {
 		} finally {
 			tmpOut.close();
 			rdr.close();
-			tmpFile.delete();
+			tmpFile.deleteOnExit();
 		}
 
 		return batchUrls;

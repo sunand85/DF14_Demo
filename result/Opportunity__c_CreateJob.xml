@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jobInfo xmlns="http://www.force.com/2009/06/asyncapi/dataload">
+	<operation>insert</operation>
+	<object>Opportunity__c</object>
+	<concurrencyMode>Parallel</concurrencyMode>
+	<contentType>CSV</contentType>
+</jobInfo>

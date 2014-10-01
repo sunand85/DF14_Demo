@@ -1,6 +1,7 @@
 apex_scripts/
 resources/
 testdata/
+result/
 **/.settings
 target
 *.classpath

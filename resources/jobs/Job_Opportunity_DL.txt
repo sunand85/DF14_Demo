@@ -1,0 +1,93 @@
+{
+    "jobName": "job1",
+    "entityFunction" : "setupOpportunityFields",
+    "extract": {
+        "source": "sfdc",
+        "connection": "conf/application.conf",
+        "table": "Account",
+        "fields": [
+            "Id",
+            "Name"
+        ],
+        "output": "./resources/datagen/process/account.csv"
+    },
+    "transform": {
+    	"query" : "",
+    	"useQuery" : false,
+    	"limit" : 100,
+        "tableInfo": [
+            {
+                "file": "./resources/datagen/process/account.csv",
+                "table": "account",
+                "joinColumnName": "name",
+                "columns": [
+                    {
+                        "name": "Id",
+                        "alias": "AccountId"
+                    }
+                ]
+            },
+            {
+                "file": "./testdata/sfdc/Opportunity.csv",
+                "table": "opportunity",
+                "joinColumnName": "AccountName",
+                "columns": [
+                    {
+                        "name": "IsPrivate",
+                        "alias": "IsPrivate"
+                    },
+                    {
+                        "name": "Name",
+                        "alias": "Name"
+                    },
+                    {
+                        "name": "StageName",
+                        "alias": "StageName"
+                    },
+                    {
+                        "name": "Amount",
+                        "alias": "Amount"
+                    },
+                    {
+                        "name": "Type",
+                        "alias": "Type"
+                    },
+                    {
+                        "name": "CloseDate",
+                        "alias": "CloseDate"
+                    },
+                    {
+                        "name": "Subscription_Start_Date__c",
+                        "alias": "Subscription_Start_Date__c"
+                    },
+                    {
+                        "name": "Subscription_End_Date__c",
+                        "alias": "Subscription_End_Date__c"
+                    },
+                    {
+                        "name": "OTR__c",
+                        "alias": "OTR__c"
+                    },
+                    {
+                        "name": "ASV__c",
+                        "alias": "ASV__c"
+                    },
+                    {
+                        "name": "Users__c",
+                        "alias": "Users__c"
+                    }
+                ]
+            }
+        ],
+        "join": true,
+        "output": "./resources/datagen/process/Job_Opportunity_DL.csv"
+    },
+    "load": {
+        "target": "sfdc",
+        "sObject": "Opportunity",
+        "operation": "insert",
+        "contentType": "CSV",
+        "cleanUp" : true,
+        "file": "./resources/datagen/process/Job_Opportunity_DL.csv"
+    }
+}

@@ -1,0 +1,2 @@
+All the temporary files need will be created here.
+Clean of temporary files is not handled.

@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import antlr.StringUtils;
+
 import com.dreamforce.demo.App;
 import com.sforce.soap.metadata.AsyncResult;
 import com.sforce.soap.metadata.CustomField;
@@ -14,6 +16,7 @@ import com.sforce.soap.metadata.Metadata;
 import com.sforce.soap.metadata.MetadataConnection;
 import com.sforce.soap.metadata.Picklist;
 import com.sforce.soap.metadata.PicklistValue;
+import com.sforce.soap.metadata.RemoteSiteSetting;
 import com.sforce.soap.metadata.SharingModel;
 import com.sforce.ws.ConnectionException;
 
@@ -29,7 +32,30 @@ public class MetadataUtil {
     static {
     	metadataConnection = SFDCConnection.createMetadataConnection();
     }
+    
+    public static void createRemoteSiteSetting(String fullName, String url) throws Exception {
+    	Metadata[] metadata = new Metadata[1];
+    	RemoteSiteSetting remoteSiteSetting = new RemoteSiteSetting();
+    	remoteSiteSetting.setDescription("Created From Api");
+    	remoteSiteSetting.setFullName(fullName);
+    	remoteSiteSetting.setIsActive(true);
+    	remoteSiteSetting.setUrl(url);
+    	metadata[0] = remoteSiteSetting;
+    	createAndCheckStatus(metadata);
+    }
 
+    public static void createMasterDetailRelationField(String objName, String fieldName, String relatedTo) throws Exception {
+    	Metadata[] metadata = new Metadata[1];
+        CustomField custField = new CustomField();
+        custField.setType(FieldType.MasterDetail);
+        custField.setLabel(fieldName);
+        custField.setReferenceTo(relatedTo);
+        custField.setRelationshipName(StringUtils.stripBack(objName, "_c") + "Objects");
+        custField.setFullName(objName+"."+fieldName.replaceAll(" ", "_")+"__c");
+        metadata[0] = custField;
+        createAndCheckStatus(metadata);
+    }
+    
     public static void createFormulaFields(String objName, List<HashMap<String, String>> formulafieldsList) throws Exception {
         Metadata[] metadata = new Metadata[formulafieldsList.size()];
         int i=0;

@@ -66,7 +66,10 @@ public class ETLJobProcessor implements IJobProcessor {
 	public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
 		ETLJobProcessor processor = new ETLJobProcessor(SFDCConnection.fetchSFDCInfo());
 		ObjectMapper mapper = new ObjectMapper();
-		JobInfo jobInfo = mapper.readValue(new File(resDir + "/jobs/Job_Opportunity_DL.txt"), JobInfo.class);
+		//Use Case 1
+		//JobInfo jobInfo = mapper.readValue(new File(resDir + "/jobs/Job_Opportunity_DL.txt"), JobInfo.class);
+		//User Case 2
+		JobInfo jobInfo = mapper.readValue(new File(resDir + "/jobs/Job_Account_Weekly.txt"), JobInfo.class);
 		BulkJobInfo bulkJobInfo = processor.execute(jobInfo);
 		if(bulkJobInfo.getNumberBatchesFailed() >= 1)
 			App.logError("Kidney Failure, Oh It's not that serious go check the Bulk Data Load Jobs/logs");

@@ -1,0 +1,77 @@
+{
+    "jobName": "Account_Level_Weekly_Usage_Data",
+    "jobType" : "UsageData",
+    "namespacePrefix" : "JBCXM",
+    "useNameSpace" : false,
+    "entityFunction" : "configureOrgSettings",
+    "preprocess" : {
+    	"inputFile" : "./testdata/sfdc/Account_UsageData_Weekly.csv",
+    	"monthly" : false,
+    	"weekly" : true,
+    	"fieldName" : "Date",
+    	"outputFile" : "./resources/process/UsageDataFinal.csv"
+    },
+    "extract": {
+        "source": "sfdc",
+        "connection": "conf/application.conf",
+        "table": "Account",
+        "fields": [
+            "Id",
+            "Name"
+        ],
+        "output": "./resources/process/account.csv"
+    },
+    "transform": {
+    	"query" : "",
+    	"useQuery" : false,
+        "tableInfo": [
+            {
+                "file": "./resources/process/account.csv",
+                "table": "account",
+                "joinColumnName": "name",
+                "columns": [
+                    {
+                        "name": "Id",
+                        "alias": "Account__c"
+                    }
+                ]
+            },
+            {
+                "file": "./resources/process/UsageDataFinal.csv",
+                "table": "usagedata",
+                "joinColumnName": "Account",
+                "columns": [
+                	{
+                        "name": "Name",
+                        "alias": "Name"
+                    },
+                    {
+                        "name": "Date",
+                        "alias": "Date__c"
+                    },
+                    {
+                        "name": "Downloads",
+                        "alias": "Downloads__c"
+                    },
+                    {
+                        "name": "Units",
+                        "alias": "Units__c"
+                    },
+                    {
+                        "name": "Amount",
+                        "alias": "Amount__c"
+                    }
+                ]
+            }
+        ],
+        "join": true,
+        "output": "./resources/process/Final_Account_Weekly.csv"
+    },
+    "load": {
+        "target": "sfdc",
+        "sObject": "MyUsageData__c",
+        "operation": "insert",
+        "contentType": "CSV",
+        "file": "./resources/process/Final_Account_Weekly.csv"
+    }
+}

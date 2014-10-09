@@ -44,7 +44,7 @@ public class SFDCConnection {
 			sept = sept.substring(0, sept.indexOf(".com") + 4);
 			App.sfdcInfo.setEndpoint(sept);
 			
-			App.logInfo("SDCF Info:\n" + App.sfdcInfo.toString());
+			//App.logInfo("SDCF Info:\n" + App.sfdcInfo.toString());
 			return App.sfdcInfo;
 		} catch (ConnectionException ce) {
 			ce.printStackTrace();

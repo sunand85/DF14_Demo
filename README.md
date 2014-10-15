@@ -1,4 +1,5 @@
 Building Your Own Dataloader for Salesforce
+============================================
 
 This project is all about using Saleforce API’s + Core Java + Embedded DB = Build Your Own Dataloader.
 
@@ -9,6 +10,7 @@ Note: - This is just a sample App, created for use cases mentioned in my present
 Do try this @ your office. :)
 
 Step 1:
+------
 
 Fill the properties file with relevant details, (/conf/application.properties)
 
@@ -22,12 +24,14 @@ sfdc.metadataUrl=https://login.salesforce.com/services/Soap/u/29.0
 sfdc.apexUrl=https://login.salesforce.com/services/Soap/s/29.0
 
 Step 2:
+------
 
 Create your own ETL job config, (/resources/jobs)
 
 There are sample job file kept in this location, it’s straight forward to fill this information and please go through the code to look up what all properties I am using currently since I have put additional information or keys for future expansion.
 
 Step 3:
+------
 
 Start reading the code. A good starting point would be,
 
@@ -38,6 +42,7 @@ Start reading the code. A good starting point would be,
 * ETLJobProcessor.java --> Code having the main execution context and also all the procession related to ETL is placed in here.
 
 Step 4:
+------
 
 Execute the required job defined in the JSON from ETLJobProcessor.java (main method).
 
@@ -45,9 +50,12 @@ Step 5:
 
 Look out for Dreamforce.log or console for progress.
 
-“Beneath this project there is an idea and ideas are bulletproof”
+License
+-----
 
+New BSD
 
+**Beneath this project there is an idea and ideas are bulletproof!**
 
 
 

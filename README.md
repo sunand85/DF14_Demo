@@ -47,6 +47,7 @@ Step 4:
 Execute the required job defined in the JSON from ETLJobProcessor.java (main method).
 
 Step 5:
+------
 
 Look out for Dreamforce.log or console for progress.
 
